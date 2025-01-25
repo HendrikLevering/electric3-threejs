@@ -1,0 +1,15 @@
+{
+  "name": "electric-starter-app",
+  "version": "1.0.0",
+  "description": "``` $ clj -A:dev -X user/main",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.143.0"
+  }
+}
