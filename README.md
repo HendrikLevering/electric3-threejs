@@ -54,6 +54,7 @@ to the tb/camera variable.
 * scenegraph macros are transparent in the sense that they return the value of the last form in their body (same behaviour as electric dom macros).
 * resource objects macros like geometries and materials and cameras return the resource instance object
 * resource and scenegraph objects can be modified with the three/props macro (works similiar to dom/props)
+* inside resource and scenegraph objects the tb/node referres to the object instance.
 * the renderer requires, that the canvas has a defined height. You can either give the parent dom element a defined height or you can use dom/node inside three/WebGLRenderer to get the canvas element and alter it with dom/props
 
 ## Start the example
