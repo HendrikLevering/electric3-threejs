@@ -10,22 +10,37 @@ This library provides [Three.js](https://threejs.org/) bindings for [Electric v3
 
 ```clojure
 io.github.hendriklevering/electric3-threejs {:git/url "https://github.com/HendrikLevering/electric3-threejs"
-                                                        :git/sha "82c3fbc174cddad0c2166c1b6b69b101d92f111b"}
+                                                        :git/sha "e94e2829036095163acde3d731e894fb3f33cda8"}
 ```
 
 ## Example
 
 ```clojure
-(ns my-app.main
-  (:require [hyperfiddle.electric :as e]
-            [hyperfiddle.electric-three :as three]))
+(ns my.app
+  (:require [hyperfiddle.electric3 :as e]
+            [hyperfiddle.electric-dom3 :as dom]
+            [de.levering-it.electric.three :as three]
+            [de.levering-it.electric.three.bindings :as tb]))
 
-(e/defn Scene []
-  (e3/scene
-    (e3/perspective-camera {:position [0 0 5]})
-    (e3/mesh
-      (e3/box-geometry)
-      (e3/mesh-standard-material {:color 0x00ff00}))))
+
+(e/defn Example []
+   (dom/div
+    (dom/props {:style {:height "50vh"}})
+    (e/client
+      (three/WebGLRenderer
+        (let [camera (three/PerspectiveCamera 75 (/ tb/view-port-width tb/view-port-height) 0.1 2000
+                       (case (three/props {:position {:x 0 :y 1 :z 0}})
+                                 ; case syncing is needed because position has to be set
+                                 ; bevore lookAt is called
+                         (.lookAt tb/node 1 0.5 0)))
+              box (three/BoxGeometry 1 1 1)
+              material (three/MeshBasicMaterial nil
+                         (three/props {:color (three/Color 1 0 0)}))]
+          (binding [tb/camera camera]
+            (three/Scene
+              (three/GridHelper 20 20)
+              (three/Mesh box material
+                (three/props {:position {:x 5 :y 0.5 :z 0}})))))))))
 ```
 
 ## Start the example
