@@ -2,9 +2,9 @@
            org.clojure/clojure            {:mvn/version "1.12.0-alpha5"}
            org.clojure/clojurescript      {:mvn/version "1.11.121"} ; for demo
            }
- :paths   ["src" "resources"]
+ :paths   ["src"]
  :aliases {:example-app
-           {:extra-paths ["src-starter-app"]
+           {:extra-paths ["src-starter-app"  "resources"]
             :extra-deps  {thheller/shadow-cljs {:mvn/version "2.26.2"}
                           org.clojure/tools.logging      {:mvn/version "1.2.4"}
                           ch.qos.logback/logback-classic {:mvn/version "1.4.14"}
