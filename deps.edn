@@ -9,4 +9,8 @@
                           org.clojure/tools.logging      {:mvn/version "1.2.4"}
                           ch.qos.logback/logback-classic {:mvn/version "1.4.14"}
                           ring/ring                      {:mvn/version "1.11.0"} ; to serve the app
-                          ring-basic-authentication/ring-basic-authentication {:mvn/version "1.2.0"}}}}}
+                          ring-basic-authentication/ring-basic-authentication {:mvn/version "1.2.0"}}}
+           :build {:deps {io.github.clojure/tools.build
+                          {:mvn/version "0.10.5"}
+                          slipset/deps-deploy {:mvn/version "0.2.2"}}
+                   :ns-default build}}}
