@@ -1,4 +1,8 @@
-# Electric v3 Three.js bindings
+# electric-three
+[![Clojars Project](https://img.shields.io/clojars/v/de.levering-it/electric-three.svg)](https://clojars.org/de.levering-it/electric-three)
+![example branch parameter](https://github.com/HendrikLevering/electric3-threejs/actions/workflows/clojure.yaml/badge.svg?branch=main)
+
+Three.js bindings for Electric V3 clojure.
 
 ## Usage
 
