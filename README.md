@@ -2,7 +2,7 @@
 [![Clojars Project](https://img.shields.io/clojars/v/de.levering-it/electric-three.svg)](https://clojars.org/de.levering-it/electric-three)
 ![example branch parameter](https://github.com/HendrikLevering/electric3-threejs/actions/workflows/clojure.yaml/badge.svg?branch=main)
 
-Three.js bindings for Electric V3 clojure.
+Three.js bindings for Electric V3 clojure. The most simple way to start is to clone the [demo](https://github.com/HendrikLevering/electric3-threejs-demo) repository and run it.
 
 ## Usage
 
@@ -56,17 +56,6 @@ to the tb/camera variable.
 * resource and scenegraph objects can be modified with the three/props macro (works similiar to dom/props)
 * inside resource and scenegraph objects the tb/node referres to the object instance.
 * the renderer requires, that the canvas has a defined height. You can either give the parent dom element a defined height or you can use dom/node inside three/WebGLRenderer to get the canvas element and alter it with dom/props
-
-## Start the example
-
-This repository has included some examples. To run the examples do the following steps:
-
-* Clone the repository
-* Run `npm install`
-* REPL: Use the `:example-app` alias and run `(dev/-main)` to start the dev build
-* Visit http://localhost:8080 in your browser
-* Hot reload is enabled - changes will reflect immediately in the browser
-
 
 # Notes
 
