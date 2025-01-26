@@ -1,10 +1,10 @@
-(ns de.levering-it.three.three
+(ns de.levering-it.electric.three
   (:require #?(:cljs ["three" :as three])
-            [de.levering-it.three.impl :as impl]
+            [de.levering-it.electric.three.impl :as impl]
             [hyperfiddle.electric-dom3 :as dom]
             [missionary.core :as m]
             [hyperfiddle.electric3 :as e])
-  #?(:cljs (:require-macros [de.levering-it.three.three])))
+  #?(:cljs (:require-macros [de.levering-it.electric.three])))
 
 
 ;; set properties of three.js obj

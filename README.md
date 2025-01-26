@@ -1,34 +1,63 @@
 # Electric v3 Three.js bindings
 
-# Electric v3 Starter App
+## Usage
+
+This library provides [Three.js](https://threejs.org/) bindings for [Electric v3](https://electric.hyperfiddle.net/), allowing you to create reactive 3D graphics applications.## Getting Started
+
+
+* Add the dependency to your `deps.edn`:
+* Install three.js dependencys: `npm install three` or add `"three": "^0.143.0"` to your package.json
+
+```clojure
+io.github.hendriklevering/electric3-threejs {:git/url "https://github.com/HendrikLevering/electric3-threejs"
+                                                        :git/sha "82c3fbc174cddad0c2166c1b6b69b101d92f111b"}
+```
+
+## Example
+
+```clojure
+(ns my-app.main
+  (:require [hyperfiddle.electric :as e]
+            [hyperfiddle.electric-three :as three]))
+
+(e/defn Scene []
+  (e3/scene
+    (e3/perspective-camera {:position [0 0 5]})
+    (e3/mesh
+      (e3/box-geometry)
+      (e3/mesh-standard-material {:color 0x00ff00}))))
+```
+
+## Start the example
+
+This repository has included some examples. To run the examples do the following steps:
+
+* Clone the repository
+* Run `npm install`
+* REPL: Use the `:example-app` alias and run `(dev/-main)` to start the dev build
+* Visit http://localhost:8080 in your browser
+* Hot reload is enabled - changes will reflect immediately in the browser
+
+
+# Notes
+
+The library was tested with "three": "^0.143.0". I expect that that it will work with newer versions as well. Since Electric V3 is still in alpha and under active development, I can't guarantee that it wont break in the future.
+
+## Development
+
+Pullrequests are welcome :-)
+
+### Design decisions
+
+The library is a thin wrapper around the Three.js library. It will eagerly render
+every bound camera at any animation frame. This means that things will get rendered even if there hasn't changed anything in the scene. This is done to avoid some complexity in the library especially with mutable nature of three.js objects.
+I guess that OpenGL is often used in highly dynamic environments, where lots of chanaging things have to be rendered. So I think, that this is a reasonable approach.
+I experimented with a full reactive approach, but it was too slow, if more than
+100 three.js resource objects changed between to frames.
 
 ## Links
 
 * Electric github with source code: https://github.com/hyperfiddle/electric
-* Tutorial: https://electric.hyperfiddle.net/ (we'll be fleshing out this as a full docs site asap)
+* Tutorial: https://electric.hyperfiddle.net/
 
-## Getting started
-
-* Shell: `clj -A:dev -X dev/-main`.
-* Login instructions will be printed
-* REPL: `:dev` deps alias, `(dev/-main)` at the REPL to start dev build
-* App will start on http://localhost:8080
-* Electric root function: [src/electric_starter_app/main.cljc](src/electric_starter_app/main.cljc)
-* Hot code reloading works: edit -> save -> see app reload in browser
-
-```shell
-# Prod build
-clj -X:build:prod build-client
-clj -M:prod -m prod
-
-# Uberjar (optional)
-clj -X:build:prod uberjar :build/jar-name "app.jar"
-java -cp target/app.jar clojure.main -m prod
-
-# Docker
-docker build -t electric3-starter-app:latest .
-docker run --rm -it -p 8080:8080 electric3-starter-app:latest
-```
-
-## License
-Electric v3 is **free for bootstrappers and non-commercial use,** and otherwise available commercially under a business source available license, see: [Electric v3 license change](https://tana.pub/lQwRvGRaQ7hM/electric-v3-license-change) (2024 Oct). License activation is experimentally implemented through the Electric compiler, requiring **compile-time** login for **dev builds only**. That means: no license check at runtime, no login in prod builds, CI/CD etc, no licensing code even on the classpath at runtime. This is experimental, but seems to be working great so far. We do not currently require any account approval steps, just log in. There will be a EULA at some point once we finalize the non-commercial license, for now we are focused on enterprise deals which are different.
+Copyright (c) 2025 Levering IT GmbH

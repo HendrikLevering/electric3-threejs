@@ -1,4 +1,4 @@
-(ns de.levering-it.three.bindings
+(ns de.levering-it.electric.three.bindings
   (:require [hyperfiddle.electric3 :as e]))
 
 (e/declare node)

@@ -1,11 +1,4 @@
-(ns de.levering-it.three.example.example
-  (:require [hyperfiddle.electric3 :as e]
-            [de.levering-it.three.three :as tt]
-            [de.levering-it.three.bindings :as tbp]
-            [de.levering-it.three.utils :as tu]
-            [hyperfiddle.electric-dom3 :as dom]
-            [hyperfiddle.electric-forms3 :refer [Checkbox]]
-            [clojure.string :as s]))
+(ns de.levering-it.electric.three.impl.experimental.physics)
 
 (defn sign [x]
   (cond
@@ -18,7 +11,6 @@
     (zero? new) false
     (zero? old) false
     :else (not= (sign old) (sign new))))
-
 
 (defn- compute-look-at
   "Compute the 3D 'look-at' direction from yaw and pitch.
@@ -37,15 +29,15 @@
         lz (* cp sy)]
     [lx ly lz]))
 
- (def ^:private max-pitch-rads
-   "Maximum absolute pitch in radians (±85°)."
-   #?(:clj (Math/toRadians 85)
-      :cljs 1.4835298641951802))
+(def ^:private max-pitch-rads
+  "Maximum absolute pitch in radians (±85°)."
+  #?(:clj (Math/toRadians 85)
+     :cljs 1.4835298641951802))
 
- (defn clamp
-   "Clamp `val` between `min-val` and `max-val`."
-   [val min-val max-val]
-   (max min-val (min max-val val)))
+(defn clamp
+  "Clamp `val` between `min-val` and `max-val`."
+  [val min-val max-val]
+  (max min-val (min max-val val)))
 
 (defn- do-single-step
   "Perform a single physics step of `dt-ms` (<= 50ms ideally).
@@ -166,8 +158,7 @@
                            0
                            final-vz)]
 
-
-            ;; ---------------------------------------------------------
+;; ---------------------------------------------------------
             ;; 4) Update positions (Euler integration)
             ;; ---------------------------------------------------------
             (let [final-x (+ x (* final-vx dt))
@@ -253,167 +244,3 @@
           (recur new-state (max 0 (- dt-left this-step))))
         ;; All time consumed, return final
         acc-state))))
-
-;; Suppose we have an initial player state at rest, on the ground, facing yaw=0.
-(def player-state
-  {:x     0.0
-   :y     0.0
-   :z     0.0
-   :eyes-height 1.75
-   :vx    0.0
-   :vy    0.0
-   :vz    0.0
-   :yaw   0.0
-   :pitch 0.0
-   :roll  0.0
-
-   ;; Physical parameters
-   :mass     80.0        ;; 80 kg
-   :mi_yaw   1.0
-   :mi_pitch 1.0
-   :mi_roll  1.0
-   :look-at [1 0 0]})
-
-(def opts
-  {:force             1000.0   ;; N (Newtons)
-   :torque_yaw        5.0
-   :torque_pitch      0.0
-   :torque_roll       0.0
-   :friction          0.5
-   :G                 1.6 #_9.81
-   :max-speed         5.0
-   :initial-jump-speed 3.0 })
-
-(comment
-  (cond-> 1
-    false inc
-    true inc
-    )
-  (-> player-state
-    (move-entity 5 :move-forward opts)
-    (move-entity 5 :none opts)
-    #_(move-entity 10 :move-forward opts))
-  )
-
-(e/defn Example []
-  (e/client
-    (let [cb (dom/div (dom/text "wireframe:") (Checkbox false))]
-      (dom/div
-        (dom/props {:style {:min-height "50vh"}})
-        (tt/WebGLRenderer
-          (dom/props {:antialias true})
-          (let [key-state (binding [dom/node (.-body js/document)] (tu/KeyState))
-                up? (get key-state "ArrowUp")
-                down? (get key-state "ArrowDown")
-                left? (get key-state "ArrowLeft")
-                right? (get key-state "ArrowRight")
-                shift? (get key-state "Shift")
-                spacebar? (get key-state " ")
-                state! (atom player-state)
-                state (e/watch state!)
-                x (:x state)
-                y (:y state)
-                z (:z state)
-                eyes-height (+ y (:eyes-height state))
-                [lx ly lz] (:look-at state)
-                t (e/System-time-ms)]
-
-            (e/client
-              (let [actions (cond-> #{}
-                              spacebar? (conj :jump)
-                              (and shift? left?) (conj :move-left)
-                              (and shift? right?) (conj :move-right)
-                              (and (not shift?) left?) (conj :turn-left)
-                              (and (not shift?) right?) (conj :turn-right)
-                              up? (conj :move-forward)
-                              down? (conj :move-backward))]
-                ((tu/with-t->dt (fn [dt state!]
-                                  (swap! state! move-entity dt actions opts))) t state!)))
-            (let [c  (tt/PerspectiveCamera 75 (/ tbp/view-port-width tbp/view-port-height) 0.1 2000
-                       (case (tt/props {:position {:x x :y eyes-height :z z}})
-                         (.lookAt tbp/node (+ x lx) (+ eyes-height ly) (+ z lz))))
-                  box (tt/BoxGeometry 1 1 1)
-                  box2 (tt/BoxGeometry 1 1 1)
-                  material (tt/MeshBasicMaterial nil
-                             (tt/props {:wireframe false
-                                        :color (if cb (tt/Color 1 0 0) (tt/Color 0 1 0))}))
-                  skybox (tt/BoxGeometry 1000 1000 1000)
-                  skybox-mat (tt/MeshBasicMaterial nil
-                               (tt/props {:color (tt/Color 0.4 0.6 0.9), :side tt/backSide }))
-                  texture (.load
-                            (tt/TextureLoader )
-                            "stone2.jpg")
-                  ground-texture  (.load (tt/TextureLoader) "grass2.jpg"
-                                    (fn [t]
-                                      (set! (.-wrapS t) tt/repeatWrapping)
-                                      (set! (.-wrapT t) tt/repeatWrapping)
-                                      (.set (.-repeat t) 100 100)))
-                  ground (tt/PlaneGeometry 1000 1000 1 1)
-                  ground-mat (tt/MeshPhongMaterial nil
-                               (tt/props {:shininess 100
-                                          :map ground-texture
-                                          :specular (tt/Color 0.5 0.5 0.5)}))
-                  phong-material (tt/MeshPhongMaterial nil
-                                   (tt/props {:shininess 100
-                                              :wireframe cb
-                                              :map texture
-                                              :specular (tt/Color 0.5 0.5 0.5)}))
-
-                  render-target (tt/WebGLCubeRenderTarget 512 (clj->js {:generateMipmaps true
-                                                                        :minFilter tt/linearMipmapLinearFilter}))
-                  cube-x 5
-                  cube-z 0
-                  cube-camera (tt/CubeCamera 0.2 2000 render-target
-                                (tt/props {:position {:x cube-x :y eyes-height :z cube-z}}))
-                  cube-material (tt/MeshBasicMaterial nil
-                                  (tt/props {:envMap (.-texture render-target)
-                                             :reflectivity 0.5}))]
-              ground-mat ;prevent unloading
-              (binding [tbp/camera [cube-camera c]]
-                (tt/Scene
-                  #_(tt/AmbientLight 0x404040)
-
-                  (tt/HemisphereLight 0xffffff 0x888888 1)
-                  (tt/Mesh skybox skybox-mat)
-
-
-                  (tt/Mesh box material
-                    (tt/props {:position {:x x :y (+ y 0.5) :z z}}))
-                  (if cb
-                    (tt/GridHelper 1000 1000)
-                    (tt/Mesh ground ground-mat
-                      (tt/props {:rotation {:x  tu/deg-90}})))
-
-                  (tt/Mesh box2 cube-material
-                    (tt/props {:position {:x cube-x :y 1.75 :z cube-z}}))
-
-                  (let [items 10]
-                    (e/for [i (e/diff-by identity (range items))]
-                      (tt/Mesh box phong-material
-                        (tt/props {:position {:x -5 :y 0.5 :z (* 2 (- (/ items 2) i))}}))
-                      (tt/Mesh box phong-material
-                        (tt/props {:position {:x 5 :y 0.5 :z (* 2 (- (/ items 2) i))}}))))))
-              (binding [tbp/camera [cube-camera c]]
-                (tt/Scene
-                  #_(tt/AmbientLight 0x404040)
-
-                  (tt/HemisphereLight 0xffffff 0x888888 1)
-                  (tt/Mesh skybox skybox-mat)
-
-
-                  (tt/Mesh box material
-                    (tt/props {:position {:x x :y (+ y 0.5) :z z}}))
-                  (if cb
-                    (tt/GridHelper 1000 1000)
-                    (tt/Mesh ground ground-mat
-                      (tt/props {:rotation {:x  tu/deg-90}})))
-
-                  (tt/Mesh box2 cube-material
-                    (tt/props {:position {:x cube-x :y 1.75 :z cube-z}}))
-
-                  (let [items 10]
-                    (e/for [i (e/diff-by identity (range items))]
-                      (tt/Mesh box phong-material
-                        (tt/props {:position {:x -5 :y 0.5 :z (* 2 (- (/ items 2) i))}}))
-                      (tt/Mesh box phong-material
-                        (tt/props {:position {:x 5 :y 0.5 :z (* 2 (- (/ items 2) i))}})))))))))))))

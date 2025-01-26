@@ -1,11 +1,11 @@
-(ns de.levering-it.three.impl.experimental.impl
+(ns de.levering-it.electric.three.impl.experimental.impl
   (:require [hyperfiddle.electric3 :as e]
             [hyperfiddle.electric-dom3 :as dom]
             #?(:cljs ["three" :as three])
             [missionary.core :as m]
-            [three.bindings :as tbp]
+            [de.levering-it.electric.three.bindings :as tbp]
             [cljs.core :as c])
-  #?(:cljs (:require-macros [de.levering-it.three.impl.experimental.impl])))
+  #?(:cljs (:require-macros [de.levering-it.electric.three.impl.experimental.impl])))
 
 ; internal bindings
 (e/declare obj-port)

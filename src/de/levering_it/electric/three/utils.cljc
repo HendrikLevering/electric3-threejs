@@ -1,4 +1,4 @@
-(ns de.levering-it.three.utils
+(ns de.levering-it.electric.three.utils
   (:require [hyperfiddle.electric3 :as e]
             [hyperfiddle.electric-dom3 :as dom]
             [hyperfiddle.electric-dom3-events :as events]
