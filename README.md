@@ -8,12 +8,11 @@ Three.js bindings for Electric V3 clojure.
 
 This library provides [Three.js](https://threejs.org/) bindings for [Electric v3](https://electric.hyperfiddle.net/), allowing you to create reactive 3D graphics applications.## Getting Started
 
-* Install three.js dependencys: `npm install three` or add `"three": "^0.143.0"` to your package.json
+* Install three.js dependencys: `npm install three`
 * Add the dependency to your `deps.edn`:
 
 ```clojure
-io.github.hendriklevering/electric3-threejs {:git/url "https://github.com/HendrikLevering/electric3-threejs"
-                                                        :git/sha "e94e2829036095163acde3d731e894fb3f33cda8"}
+de.levering-it/electric-three {:mvn/version "0.0.4"}
 ```
 
 ## Example
@@ -46,6 +45,17 @@ io.github.hendriklevering/electric3-threejs {:git/url "https://github.com/Hendri
                 (three/props {:position {:x 5 :y 0.5 :z 0}})))))))))
 ```
 
+Keypoints:
+
+* three/WebGLRenderer provides the webgl context and mounts a canvas to the dom
+* (binding [tb/camera camera] ...): A scene will be rendered with the camera, that is bound
+to the tb/camera variable.
+* (three/Scene ...) This creates a scene graph. Scenegraph objects can be created inside a scene and are mounted as a child to the parent scene graph object (it works the same way as electric dom).
+* scenegraph macros are transparent in the sense that they return the value of the last form in their body (same behaviour as electric dom macros).
+* resource objects macrocs like geometries and materials and cameras return the resource instance object
+* resource and scencegraph objects can be modified with the tb/props macro (works similiar to dom/props)
+* the renderer requires, that the canvas has a defined height. You can either give the parent dom element a defined height or you can use dom/node inside three/WebGLRenderer to get the canvas element and alter it with dom/props
+
 ## Start the example
 
 This repository has included some examples. To run the examples do the following steps:
@@ -59,7 +69,24 @@ This repository has included some examples. To run the examples do the following
 
 # Notes
 
+## Stability
 The library was tested with "three": "^0.143.0". I expect that that it will work with newer versions as well. Since Electric V3 is still in alpha and under active development, I can't guarantee that it wont break in the future.
+
+## npm-deps
+Shadow-cljs CLI-tool will automatically install npm dependencies, if they are declared by a library in a [deps.cljs](https://shadow-cljs.github.io/docs/UsersGuide.html#publish-deps-cljs) file.
+However, Electric starts shadow-cljs via api and this won't install npm dependencies.
+You can add `(npm-deps/main nil nil)` to your shadow-cljs start code:
+
+```clojure
+    (npm-deps/main nil nil)
+    (shadow-server/start!) ; no-op in calva shadow-cljs configuration which starts this out of band
+    (shadow/watch :dev)
+```
+
+And require it like this:
+```clojure
+#?(:clj [shadow.cljs.devtools.server.npm-deps :as npm-deps])
+```
 
 ## Development
 
