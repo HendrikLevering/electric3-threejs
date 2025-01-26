@@ -4,9 +4,8 @@
 
 This library provides [Three.js](https://threejs.org/) bindings for [Electric v3](https://electric.hyperfiddle.net/), allowing you to create reactive 3D graphics applications.## Getting Started
 
-
-* Add the dependency to your `deps.edn`:
 * Install three.js dependencys: `npm install three` or add `"three": "^0.143.0"` to your package.json
+* Add the dependency to your `deps.edn`:
 
 ```clojure
 io.github.hendriklevering/electric3-threejs {:git/url "https://github.com/HendrikLevering/electric3-threejs"
